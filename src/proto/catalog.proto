@@ -1,0 +1,39 @@
+syntax="proto3";
+
+package catalog;
+
+import "google/protobuf/empty.proto";
+import "entity.proto";
+import "dto.proto";
+
+service CatalogService {
+  rpc FetchCatalog(FetchCatalogRequest) returns (FetchCatalogResponse);
+  rpc FetchCategories(dto.FetchRequest) returns (FetchCategoriesResponse);
+  rpc FetchBrands(dto.FetchRequest) returns (FetchBrandsResponse);
+  rpc FetchManufacturerCountries(dto.FetchRequest) returns (FetchManufacturerCountriesResponse);
+}
+
+//request--------------------------------------
+
+
+message FetchCatalogRequest {
+  optional int64 category_id = 1;
+}
+
+//responses--------------------------------------
+
+message FetchCatalogResponse {
+  repeated entity.Good data = 1;
+}
+
+message FetchCategoriesResponse {
+  repeated entity.GoodCategory data = 1;
+}
+
+message FetchBrandsResponse {
+  repeated entity.Brand data = 1;
+}
+
+message FetchManufacturerCountriesResponse {
+  repeated entity.ManufacturerCountry data = 1;
+}

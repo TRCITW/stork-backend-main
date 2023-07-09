@@ -1,0 +1,474 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model BankCardTokens {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  token     String?   @db.VarChar
+  clientId  Int?      @map("client_id")
+  client    Clients?  @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("bank_card_tokens")
+}
+
+model Brands {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  name      String?   @db.VarChar
+  goods     Goods[]
+
+  @@map("brands")
+}
+
+model ClientAddresses {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  address    String?   @db.VarChar
+  clientId   Int?      @map("client_id")
+  coordinate String?   @db.VarChar
+  flatNum    Int?      @map("flat_num")
+  stage      Int?
+  entrance   Int?
+  comment    String?   @db.VarChar
+  isPrimary  Boolean?  @map("is_primary")
+  client     Clients?  @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  orders     Orders[]
+
+  @@map("client_addresses")
+}
+
+model ClientRecommendations {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  goodId    Int?      @map("good_id")
+  clientId  Int?      @map("client_id")
+  client    Clients?  @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  good      Goods?    @relation(fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("client_recommendations")
+}
+
+model ClientWishlistGoods {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  clientId  Int?      @map("client_id")
+  goodId    Int?      @map("good_id")
+  clients   Clients?  @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  goods     Goods?    @relation(fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("client_wishlist_goods")
+}
+
+model Clients {
+  id                    Int                     @id @default(autoincrement())
+  createdAt             DateTime?               @default(now()) @map("created_at") @db.Timestamp(6)
+  name                  String?                 @db.VarChar
+  email                 String?                 @unique @db.VarChar
+  phone                 String?                 @unique @db.VarChar
+  firebasePushToken     String?                 @map("firebase_push_token") @db.VarChar
+  isPushEnabled         Boolean?                @map("is_push_enabled")
+  isMailingEnabled      Boolean?                @map("is_mailing_enabled")
+  avatarId              Int?                    @map("avatar_id")
+  bankCardTokens        BankCardTokens[]
+  clientAddresses       ClientAddresses[]
+  clientRecommendations ClientRecommendations[]
+  clientWishlistGoods   ClientWishlistGoods[]
+  media                 Media?                  @relation(fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  clientsPhoneAuth      ClientsPhoneAuth[]
+  managerPasswordAuth   ManagerPasswordAuth[]
+  orders                Orders[]
+  pushCampaignClients   PushCampaignClients[]
+
+  @@map("clients")
+}
+
+model ClientsPhoneAuth {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  phone     String    @unique @db.VarChar
+  clientId  Int?      @map("client_id")
+  client    Clients?  @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("clients_phone_auth")
+}
+
+model ConfirmationSmsCodes {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  phone     String    @db.VarChar
+  codeHash  String    @map("code_hash") @db.VarChar
+
+  @@map("confirmation_sms_codes")
+}
+
+model CourierDeliveryTask {
+  id                    Int                        @id @default(autoincrement())
+  createdAt             DateTime?                  @default(now()) @map("created_at") @db.Timestamp(6)
+  completedAt           DateTime?                  @map("completed_at") @db.Timestamp(6)
+  completedAtLocationId Int?                       @map("completed_at_location_id")
+  courierId             Int?                       @map("courier_id")
+  orderId               Int?                       @map("order_id")
+  reward                Float?
+  state                 CourierDeliveryTaskStates?
+  courierLocation       CourierLocations?          @relation(fields: [completedAtLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  courier               Couriers?                  @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  order                 Orders?                    @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("courier_delivery_task")
+}
+
+model CourierFines {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  amount    Float?
+  courierId Int?      @map("courier_id")
+  reason    String?   @db.VarChar
+  courier   Couriers? @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("courier_fines")
+}
+
+model CourierLocations {
+  id                  Int                   @id @default(autoincrement())
+  createdAt           DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
+  location            String?               @db.VarChar
+  courierId           Int?                  @map("courier_id")
+  courierDeliveryTask CourierDeliveryTask[]
+  courier             Couriers?             @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("courier_locations")
+}
+
+model CourierWorkingShift {
+  id                       Int                        @id @default(autoincrement())
+  createdAt                DateTime?                  @default(now()) @map("created_at") @db.Timestamp(6)
+  startedAt                DateTime?                  @default(now()) @map("started_at") @db.Timestamp(6)
+  completedAt              DateTime?                  @map("completed_at") @db.Timestamp(6)
+  courierWorkingShiftState CourierWorkingShiftStates? @default(STARTED) @map("courier_working_shift_state")
+  courierId                Int?                       @map("courier_id")
+  courier                  Couriers?                  @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("courier_working_shift")
+}
+
+model Couriers {
+  id                  Int                   @id @default(autoincrement())
+  createdAt           DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
+  name                String?               @db.VarChar
+  email               String?               @unique @db.VarChar
+  phone               String?               @unique @db.VarChar
+  firebasePushToken   String?               @map("firebase_push_token") @db.VarChar
+  isPushEnabled       Boolean?              @map("is_push_enabled")
+  avatarId            Int?                  @map("avatar_id")
+  courierDeliveryTask CourierDeliveryTask[]
+  courierFines        CourierFines[]
+  courierLocations    CourierLocations[]
+  courierWorkingShift CourierWorkingShift[]
+  media               Media?                @relation(fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  couriersPhoneAuth   CouriersPhoneAuth[]
+
+  @@map("couriers")
+}
+
+model CouriersPhoneAuth {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  phone     String    @unique @db.VarChar
+  courierId Int?      @map("courier_id")
+  courier   Couriers? @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("couriers_phone_auth")
+}
+
+model GoodCategories {
+  id                       Int                        @id @default(autoincrement())
+  createdAt                DateTime?                  @default(now()) @map("created_at") @db.Timestamp(6)
+  name                     String?                    @db.VarChar
+  goods                    Goods[]
+  previewGoodCategoryMedia PreviewGoodCategoryMedia[]
+
+  @@map("good_categories")
+}
+
+model GoodDiscounts {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  discountAmount Float?    @map("discount_amount")
+  reason         String?   @db.VarChar
+  goodId         Int?      @map("good_id")
+  isArchived     Boolean?  @default(false) @map("is_archived")
+  goods          Goods?    @relation(fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("good_discounts")
+}
+
+model Goods {
+  id                                                       Int                     @id @default(autoincrement())
+  createdAt                                                DateTime?               @default(now()) @map("created_at") @db.Timestamp(6)
+  name                                                     String?                 @db.VarChar
+  description                                              String?
+  basePrice                                                Float?                  @map("base_price")
+  baseVolume                                               Float?                  @map("base_volume")
+  volumeDimension                                          String?                 @map("volume_dimension") @db.VarChar
+  brandId                                                  Int?                    @map("brand_id")
+  goodCategoryId                                           Int?                    @map("good_category_id")
+  manufacturerCountryId                                    Int?                    @map("manufacturer_country_id")
+  clientRecommendations                                    ClientRecommendations[]
+  clientWishlistGoods                                      ClientWishlistGoods[]
+  goodDiscounts                                            GoodDiscounts[]
+  brand                                                    Brands?                 @relation(fields: [brandId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  goodCategory                                             GoodCategories?         @relation(fields: [goodCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  manufacturerCountry                                      ManufacturerCountries?  @relation(fields: [manufacturerCountryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  goodsMedia                                               GoodsMedia[]
+  orderToGoods                                             OrderToGoods[]
+  recommendedGoodsRecommendedGoodsGoodIdTogoods            RecommendedGoods[]      @relation("recommended_goods_good_idTogoods")
+  recommendedGoodsRecommendedGoodsRecommendedGoodIdTogoods RecommendedGoods[]      @relation("recommended_goods_recommended_good_idTogoods")
+  remnants                                                 Remnants[]
+
+  @@map("goods")
+}
+
+model GoodsMedia {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  goodId    Int?      @map("good_id")
+  mediaId   Int?      @map("media_id")
+  good      Goods?    @relation(fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  media     Media?    @relation(fields: [mediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("goods_media")
+}
+
+model ManagerPasswordAuth {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  login          String    @unique @db.VarChar
+  passwordSha256 String?   @map("password_sha256") @db.VarChar
+  managerId      Int?      @map("manager_id")
+  client         Clients?  @relation(fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("manager_password_auth")
+}
+
+model Managers {
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime?     @default(now()) @map("created_at") @db.Timestamp(6)
+  managerType ManagerTypes? @map("manager_type")
+  name        String?       @db.VarChar
+  login       String        @unique @db.VarChar
+
+  @@map("managers")
+}
+
+model ManufacturerCountries {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  name      String?   @db.VarChar
+  goods     Goods[]
+
+  @@map("manufacturer_countries")
+}
+
+model Media {
+  id                                                           Int                        @id @default(autoincrement())
+  createdAt                                                    DateTime?                  @default(now()) @map("created_at") @db.Timestamp(6)
+  description                                                  String?                    @db.VarChar
+  path                                                         String                     @unique @db.VarChar
+  mediaType                                                    MediaTypes?                @map("media_type")
+  isArchived                                                   Boolean?                   @default(false) @map("is_archived")
+  clients                                                      Clients[]
+  couriers                                                     Couriers[]
+  goodsMedia                                                   GoodsMedia[]
+  previewGoodCategoryMediaPreviewGoodCategoryMediaMediaTomedia PreviewGoodCategoryMedia[] @relation("preview_good_category_media_mediaTomedia")
+  pushCampaigns                                                PushCampaigns[]
+  stores                                                       Stores[]
+  storesMedia                                                  StoresMedia[]
+
+  @@map("media")
+}
+
+model OrderToGoods {
+  id      Int     @id @default(autoincrement())
+  goodId  Int?    @map("good_id")
+  orderId Int?    @map("order_id")
+  amount  Int?
+  good    Goods?  @relation(fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  order   Orders? @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("order_to_goods")
+}
+
+model Orders {
+  id                  Int                   @id @default(autoincrement())
+  createdAt           DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
+  clientId            Int?                  @map("client_id")
+  totalAmount         Float?                @map("total_amount")
+  orderState          OrdersStates?         @map("order_state")
+  packages            Int?
+  weightKg            Float?                @map("weight_kg")
+  clientAddressId     Int?                  @map("client_address_id")
+  comment             String?               @db.VarChar
+  courierDeliveryTask CourierDeliveryTask[]
+  orderToGoods        OrderToGoods[]
+  clientAddress       ClientAddresses?      @relation(fields: [clientAddressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  client              Clients?              @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("orders")
+}
+
+model PreviewGoodCategoryMedia {
+  id                                             Int             @id @default(autoincrement())
+  goodCategoryId                                 Int?            @map("good_category_id")
+  media                                          Int?
+  good_category                                  GoodCategories? @relation(fields: [goodCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  media_preview_good_category_media_mediaTomedia Media?          @relation("preview_good_category_media_mediaTomedia", fields: [media], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("preview_good_category_media")
+}
+
+model PushCampaignClients {
+  id             Int            @id @default(autoincrement())
+  pushCampaignId Int?           @map("push_campaign_id")
+  clientId       Int?           @map("client_id")
+  client         Clients?       @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pushCampaign   PushCampaigns? @relation(fields: [pushCampaignId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("push_campaign_clients")
+}
+
+model PushCampaigns {
+  id                  Int                   @id @default(autoincrement())
+  createdAt           DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
+  startedAt           DateTime?             @map("started_at") @db.Timestamp(6)
+  pushCampaignState   PushCampaignStates?   @map("push_campaign_state")
+  title               String?               @db.VarChar
+  description         String?               @db.VarChar
+  link                String?               @db.VarChar
+  previewMediaId      Int?                  @map("preview_media_id")
+  pushCampaignClients PushCampaignClients[]
+  media               Media?                @relation(fields: [previewMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("push_campaigns")
+}
+
+model RecommendedGoods {
+  id                                            Int       @id @default(autoincrement())
+  createdAt                                     DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  goodId                                        Int?      @map("good_id")
+  recommendedGoodId                             Int?      @map("recommended_good_id")
+  goodsRecommendedGoodsGoodIdTogoods            Goods?    @relation("recommended_goods_good_idTogoods", fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  goodsRecommendedGoodsRecommendedGoodIdTogoods Goods?    @relation("recommended_goods_recommended_good_idTogoods", fields: [recommendedGoodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("recommended_goods")
+}
+
+model Remnants {
+  id       Int     @id @default(autoincrement())
+  goodId   Int?    @map("good_id")
+  storeId  Int?    @map("store_id")
+  remnants Int?    @default(0)
+  good     Goods?  @relation(fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  store    Stores? @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("remnants")
+}
+
+model StoreAddresses {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  address    String?   @db.VarChar
+  coordinate String?   @db.VarChar
+  storeId    Int?      @map("store_id")
+  store      Stores?   @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("store_addresses")
+}
+
+model Stores {
+  id              Int              @id @default(autoincrement())
+  createdAt       DateTime?        @default(now()) @map("created_at") @db.Timestamp(6)
+  name            String?          @db.VarChar
+  IIN             String?          @db.VarChar
+  OGRN            String?          @db.VarChar
+  mediaId         Int?             @map("media_id")
+  remnants        Remnants[]
+  store_addresses StoreAddresses[]
+  media           Media?           @relation(fields: [mediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  storesMedia     StoresMedia[]
+
+  @@map("stores")
+}
+
+model StoresMedia {
+  id      Int     @id @default(autoincrement())
+  storeId Int?    @map("store_id")
+  mediaId Int?    @map("media_id")
+  media   Media?  @relation(fields: [mediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  store   Stores? @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("stores_media")
+}
+
+enum CourierDeliveryTaskStates {
+  CREATED
+  IN_WORK
+  SUCCEED
+  CANCELED
+
+  @@map("courier_delivery_task_states")
+}
+
+enum CourierWorkingShiftStates {
+  STARTED
+  COMPLETED
+  FAILURE
+
+  @@map("courier_working_shift_states")
+}
+
+enum ManagerTypes {
+  CONTENT_MANAGER
+  ADMIN
+
+  @@map("manager_types")
+}
+
+enum MediaTypes {
+  VIDEO
+  MEDIA_IMAGE
+
+  @@map("media_types")
+}
+
+enum OrdersStates {
+  CREATED
+  ASSEMBLY
+  DELIVERY
+  DELIVERED
+  CANCELED
+
+  @@map("orders_states")
+}
+
+enum PushCampaignStates {
+  CREATED
+  SUCCEED
+  FAILURE
+  CANCELED
+
+  @@map("push_campaign_states")
+}
+
+enum UserTypes {
+  MANAGER
+  CLIENT
+  COURIER
+
+  @@map("user_types")
+}

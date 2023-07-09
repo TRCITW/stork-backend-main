@@ -1,0 +1,45 @@
+syntax="proto3";
+
+package auth;
+
+import "google/protobuf/empty.proto";
+
+service AuthService {
+  rpc RequestSmsCode(RequestSmsCodeRequest) returns (RequestSmsCodeResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc UpdateAccessToken(google.protobuf.Empty) returns (UpdateAccessTokenResponse);
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc RecoverPass(RecoverPassRequest) returns (google.protobuf.Empty);
+}
+
+//request--------------------------------------
+
+message RequestSmsCodeRequest {
+  string phone = 1;
+}
+
+message LoginRequest {
+}
+
+message RegisterRequest {
+}
+
+message RecoverPassRequest {
+}
+
+
+//responses--------------------------------------
+
+message RequestSmsCodeResponse {
+  bool is_registered = 1;
+}
+
+message LoginResponse {
+}
+
+message RegisterResponse {
+}
+
+message UpdateAccessTokenResponse {
+}

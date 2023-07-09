@@ -1,0 +1,40 @@
+syntax="proto3";
+
+package entity;
+
+import "google/protobuf/timestamp.proto";
+
+message GoodCategory {
+  int64 id = 1;
+  optional google.protobuf.Timestamp created_at = 2;
+  optional string name = 3;
+}
+
+message Good {
+  int64 id = 1;
+  optional google.protobuf.Timestamp created_at = 2;
+  optional string name = 3;
+  optional string description = 4;
+  optional double base_price = 5;
+  optional double base_volume = 6;
+  optional string volume_dimension = 7;
+  optional int64 brand_id = 8;
+  optional int64 good_category_id = 9;
+  optional int64 manufacturer_country_id = 10;
+
+  optional Brand brand = 11;
+  optional GoodCategory category = 12;
+  optional ManufacturerCountry manufacturer_country = 13;
+}
+
+message Brand {
+  int64 id = 1;
+  optional google.protobuf.Timestamp created_at = 2;
+  optional string name = 3;
+}
+
+message ManufacturerCountry {
+  int64 id = 1;
+  optional google.protobuf.Timestamp created_at = 2;
+  optional string name = 3;
+}
