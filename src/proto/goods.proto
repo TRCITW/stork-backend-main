@@ -9,9 +9,17 @@ import "dto.proto";
 service GoodsService {
   rpc FetchGoods(FetchGoodsRequest) returns (FetchGoodsResponse);
   rpc FetchGoodModel(FetchGoodModelRequest) returns (entity.Good);
+  rpc ToggleGoodToWishlist(ToggleGoodToWishlistRequest) returns (google.protobuf.Empty);
+  rpc FetchRecommendedGoods(FetchRecommendedGoodsRequest) returns (FetchGoodsResponse);
+  rpc SearchGoods(SearchGoodsRequest) returns (FetchGoodsResponse);
+  rpc FetchDiscounts(FetchDiscountsRequest) returns (FetchDiscountsResponse);
 }
 
 //request--------------------------------------
+
+message ToggleGoodToWishlistRequest {
+  optional int64 good_id = 1;
+}
 
 message FetchGoodModelRequest {
   int64 good_id = 1;
@@ -19,13 +27,33 @@ message FetchGoodModelRequest {
 
 message FetchGoodsRequest {
   optional int64 good_category_id = 1;
-  optional dto.FetchRequest fetch_dto = 2;
+  optional int64 brand_id = 2;
+  optional int64 country_id = 3;
+  optional dto.FetchRequest fetch_dto = 4;
+}
+
+message FetchRecommendedGoodsRequest {
+  int64 good_id = 1;
+  optional dto.FetchRequest fetch_dto = 4;
+}
+
+message SearchGoodsRequest {
+  string value = 1;
+  optional dto.FetchRequest fetch_dto = 4;
+}
+
+message FetchDiscountsRequest {
+  optional int64 good_id = 1;
 }
 
 //responses--------------------------------------
 
 message FetchGoodsResponse {
   repeated entity.Good data = 1;
+}
+
+message FetchDiscountsResponse {
+  repeated entity.GoodDiscount data = 1;
 }
 
 

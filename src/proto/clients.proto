@@ -1,0 +1,41 @@
+syntax="proto3";
+
+package clients;
+
+import "google/protobuf/empty.proto";
+import "entity.proto";
+import "dto.proto";
+
+service ClientsService {
+  rpc UpdateFBMessagingToken(UpdateFBMessagingTokenRequest) returns (google.protobuf.Empty);
+  rpc CreateAddress(CreateAddressRequest) returns (entity.ClientAddress);
+  rpc DestroyAddress(dto.DeleteRequest) returns (google.protobuf.Empty);
+  rpc FetchClientRecommendations(dto.FetchRequest) returns (FetchClientRecommendationsResponse);
+  rpc FetchClientModel(google.protobuf.Empty) returns (entity.Client);
+}
+
+//request--------------------------------------
+
+message UpdateFBMessagingTokenRequest {
+  optional string token = 1;
+}
+
+message CreateAddressRequest {
+  optional string address = 1;
+  optional string coordinate = 2;
+  optional int32 flatNum = 3;
+  optional int64 clientId = 4;
+  optional int32 stage = 5;
+  optional int32 entrance = 6;
+  optional string comment = 7;
+}
+
+message UpdateTokenRequest {
+  optional string token = 1;
+}
+
+//responses--------------------------------------
+
+message FetchClientRecommendationsResponse {
+  repeated entity.Good data = 1;
+}

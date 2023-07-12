@@ -80,7 +80,7 @@ model Clients {
   clientAddresses       ClientAddresses[]
   clientRecommendations ClientRecommendations[]
   clientWishlistGoods   ClientWishlistGoods[]
-  media                 Media?                  @relation(fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  avatar                Media?                  @relation(fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   clientsPhoneAuth      ClientsPhoneAuth[]
   managerPasswordAuth   ManagerPasswordAuth[]
   orders                Orders[]
@@ -207,7 +207,7 @@ model GoodDiscounts {
   reason         String?   @db.VarChar
   goodId         Int?      @map("good_id")
   isArchived     Boolean?  @default(false) @map("is_archived")
-  goods          Goods?    @relation(fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  good           Goods?    @relation(fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("good_discounts")
 }
@@ -362,12 +362,12 @@ model PushCampaigns {
 }
 
 model RecommendedGoods {
-  id                                            Int       @id @default(autoincrement())
-  createdAt                                     DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
-  goodId                                        Int?      @map("good_id")
-  recommendedGoodId                             Int?      @map("recommended_good_id")
-  goodsRecommendedGoodsGoodIdTogoods            Goods?    @relation("recommended_goods_good_idTogoods", fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  goodsRecommendedGoodsRecommendedGoodIdTogoods Goods?    @relation("recommended_goods_recommended_good_idTogoods", fields: [recommendedGoodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                Int       @id @default(autoincrement())
+  createdAt         DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  goodId            Int?      @map("good_id")
+  recommendedGoodId Int?      @map("recommended_good_id")
+  good              Goods?    @relation("recommended_goods_good_idTogoods", fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  recommendedGood   Goods?    @relation("recommended_goods_recommended_good_idTogoods", fields: [recommendedGoodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("recommended_goods")
 }

@@ -50,7 +50,7 @@ export interface Good {
   category?: GoodCategory | undefined;
   manufacturerCountry?: ManufacturerCountry | undefined;
   discounts: GoodDiscount[];
-  recommendations: RecommendedGood[];
+  /** repeated RecommendedGood recommendations = 15; */
   media: Media[];
 }
 
@@ -99,6 +99,34 @@ export interface GoodDiscount {
   goodId?: number | undefined;
   isArchived?: boolean | undefined;
   good?: Good | undefined;
+}
+
+export interface Client {
+  id: number;
+  createdAt?: Date | undefined;
+  name?: string | undefined;
+  email?: string | undefined;
+  phone?: string | undefined;
+  isAllowMailing?: boolean | undefined;
+  firebasePushToken?: string | undefined;
+  isPushEnabled?: boolean | undefined;
+  isMailingEnabled?: boolean | undefined;
+  avatar?: Media | undefined;
+  addresses: ClientAddress[];
+}
+
+export interface ClientAddress {
+  id: number;
+  createdAt?: Date | undefined;
+  address?: string | undefined;
+  clientId?: number | undefined;
+  coordinate?: string | undefined;
+  flatNum?: number | undefined;
+  stage?: number | undefined;
+  entrance?: number | undefined;
+  comment?: string | undefined;
+  isPrimary?: boolean | undefined;
+  client?: Client | undefined;
 }
 
 export interface CourierDeliveryTaskStates {
