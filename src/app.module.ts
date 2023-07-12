@@ -4,6 +4,10 @@ import {grpcClientOptions} from "./grpc-client-options";
 import {GrpcReflectionModule} from "nestjs-grpc-reflection";
 import {ConfigModule} from "@nestjs/config";
 import { AuthModule } from './auth/auth.module';
+import { CategoriesModule } from './categories/categories.module';
+import { FilterModule } from './filter/filter.module';
+import { UsersModule } from './users/users.module';
+import { GoodsModule } from './goods/goods.module';
 
 @Module({
   controllers: [],
@@ -19,7 +23,15 @@ import { AuthModule } from './auth/auth.module';
 
     DatabaseModule,
 
-    AuthModule
+    AuthModule,
+
+    CategoriesModule,
+
+    FilterModule,
+
+    UsersModule,
+
+    GoodsModule
   ],
 })
 export class AppModule {}

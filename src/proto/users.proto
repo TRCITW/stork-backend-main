@@ -1,0 +1,17 @@
+syntax="proto3";
+
+package users;
+
+import "google/protobuf/empty.proto";
+
+service UsersService {
+  rpc UpdateFBMessagingToken(UpdateFBMessagingTokenRequest) returns (google.protobuf.Empty);
+}
+
+//request--------------------------------------
+
+message UpdateFBMessagingTokenRequest {
+  optional string token = 1;
+}
+
+//responses--------------------------------------

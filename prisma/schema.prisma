@@ -75,6 +75,7 @@ model Clients {
   isPushEnabled         Boolean?                @map("is_push_enabled")
   isMailingEnabled      Boolean?                @map("is_mailing_enabled")
   avatarId              Int?                    @map("avatar_id")
+  isAllowMailing        Boolean?                @map("is_allow_mailing")
   bankCardTokens        BankCardTokens[]
   clientAddresses       ClientAddresses[]
   clientRecommendations ClientRecommendations[]
@@ -116,7 +117,7 @@ model CourierDeliveryTask {
   orderId               Int?                       @map("order_id")
   reward                Float?
   state                 CourierDeliveryTaskStates?
-  courierLocation       CourierLocations?          @relation(fields: [completedAtLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  courierLocation       CourierLocations?          @relation(fields: [completedAtLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courier_delivery_task_completedat_location_id_fkey")
   courier               Couriers?                  @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   order                 Orders?                    @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -190,6 +191,9 @@ model GoodCategories {
   id                       Int                        @id @default(autoincrement())
   createdAt                DateTime?                  @default(now()) @map("created_at") @db.Timestamp(6)
   name                     String?                    @db.VarChar
+  parentCategoryId         Int?                       @map("parent_category_id")
+  parentCategory           GoodCategories?            @relation("good_categoriesTogood_categories", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "good_categories_good_categories_id_fk")
+  childCategories          GoodCategories[]           @relation("good_categoriesTogood_categories")
   goods                    Goods[]
   previewGoodCategoryMedia PreviewGoodCategoryMedia[]
 
@@ -415,6 +419,18 @@ model StoresMedia {
   @@map("stores_media")
 }
 
+model AppVersions {
+  id           Int       @id @default(autoincrement())
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  type         AppTypes?
+  version      String?   @db.VarChar
+  isMajor      Boolean?  @map("is_major")
+  isProduction Boolean?  @map("is_production")
+  usersCount   Int?      @default(0) @map("users_count")
+
+  @@map("app_versions")
+}
+
 enum CourierDeliveryTaskStates {
   CREATED
   IN_WORK
@@ -471,4 +487,13 @@ enum UserTypes {
   COURIER
 
   @@map("user_types")
+}
+
+enum AppTypes {
+  IOS
+  ANDROID
+  ADMIN
+  WEB
+
+  @@map("app_types")
 }

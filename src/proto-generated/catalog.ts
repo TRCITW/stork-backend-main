@@ -11,6 +11,11 @@ export interface FetchCatalogRequest {
   categoryId?: number | undefined;
 }
 
+export interface FetchChildCategoriesRequest {
+  parentCategoryId?: number | undefined;
+  fetchDto?: FetchRequest | undefined;
+}
+
 export interface FetchCatalogResponse {
   data: Good[];
 }
@@ -32,7 +37,9 @@ export const CATALOG_PACKAGE_NAME = "catalog";
 export interface CatalogServiceClient {
   fetchCatalog(request: FetchCatalogRequest, metadata?: Metadata): Observable<FetchCatalogResponse>;
 
-  fetchCategories(request: FetchRequest, metadata?: Metadata): Observable<FetchCategoriesResponse>;
+  fetchParentCategories(request: FetchRequest, metadata?: Metadata): Observable<FetchCategoriesResponse>;
+
+  fetchChildCategories(request: FetchChildCategoriesRequest, metadata?: Metadata): Observable<FetchCategoriesResponse>;
 
   fetchBrands(request: FetchRequest, metadata?: Metadata): Observable<FetchBrandsResponse>;
 
@@ -48,8 +55,13 @@ export interface CatalogServiceController {
     metadata?: Metadata,
   ): Promise<FetchCatalogResponse> | Observable<FetchCatalogResponse> | FetchCatalogResponse;
 
-  fetchCategories(
+  fetchParentCategories(
     request: FetchRequest,
+    metadata?: Metadata,
+  ): Promise<FetchCategoriesResponse> | Observable<FetchCategoriesResponse> | FetchCategoriesResponse;
+
+  fetchChildCategories(
+    request: FetchChildCategoriesRequest,
     metadata?: Metadata,
   ): Promise<FetchCategoriesResponse> | Observable<FetchCategoriesResponse> | FetchCategoriesResponse;
 
@@ -69,7 +81,13 @@ export interface CatalogServiceController {
 
 export function CatalogServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["fetchCatalog", "fetchCategories", "fetchBrands", "fetchManufacturerCountries"];
+    const grpcMethods: string[] = [
+      "fetchCatalog",
+      "fetchParentCategories",
+      "fetchChildCategories",
+      "fetchBrands",
+      "fetchManufacturerCountries",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("CatalogService", method)(constructor.prototype[method], method, descriptor);

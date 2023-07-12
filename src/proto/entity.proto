@@ -8,6 +8,9 @@ message GoodCategory {
   int64 id = 1;
   optional google.protobuf.Timestamp created_at = 2;
   optional string name = 3;
+  optional int64 parent_category_id = 4;
+  optional int32 goodsCount = 5;
+  optional int32 childCategoriesCount = 6;
 }
 
 message Good {
@@ -25,6 +28,9 @@ message Good {
   optional Brand brand = 11;
   optional GoodCategory category = 12;
   optional ManufacturerCountry manufacturer_country = 13;
+  repeated GoodDiscount discounts = 14;
+  repeated RecommendedGood recommendations = 15;
+  repeated Media media = 16;
 }
 
 message Brand {
@@ -38,3 +44,102 @@ message ManufacturerCountry {
   optional google.protobuf.Timestamp created_at = 2;
   optional string name = 3;
 }
+
+message Media {
+  int64 id = 1;
+  optional google.protobuf.Timestamp created_at = 2;
+  optional string description = 3;
+  optional string path = 4;
+  optional MediaTypes media_type = 5;
+  optional bool is_archived = 6;
+}
+
+message RecommendedGood {
+  int64 id = 1;
+  optional google.protobuf.Timestamp created_at = 2;
+  optional int64 good_id = 3;
+  optional int64 recommended_good_id = 4;
+
+  optional Good good = 5;
+}
+
+message ClientRecommendation {
+  int64 id = 1;
+  optional google.protobuf.Timestamp created_at = 2;
+  optional int64 good_id = 3;
+  optional int64 client_id = 4;
+
+  optional Good good = 5;
+}
+
+message GoodDiscount {
+  int64 id = 1;
+  optional google.protobuf.Timestamp created_at = 2;
+  optional float discount_amount = 3;
+  optional string reason = 4;
+  optional int64 good_id = 5;
+  optional bool is_archived = 6;
+
+  optional Good good = 7;
+}
+
+
+enum PushCampaignStates {
+    CREATED = 0;
+    SUCCEED = 1;
+    FAILURE = 2;
+    CANCELED = 3;
+}
+
+message CourierDeliveryTaskStates_ {
+  enum CourierDeliveryTaskStates {
+    CREATED = 0;
+    IN_WORK = 1;
+    SUCCEED = 2;
+    CANCELED = 3;
+  }
+}
+
+enum ManagerTypes {
+    CONTENT_MANAGER = 0;
+    ADMIN = 1;
+}
+
+enum MediaTypes {
+    VIDEO = 0;
+    MEDIA_IMAGE = 1;
+}
+
+message OrdersStates_ {
+  enum OrdersStates {
+    CREATED = 0;
+    ASSEMBLY = 1;
+    DELIVERY = 2;
+    DELIVERED = 3;
+    CANCELED = 4;
+  }
+}
+
+enum UserTypes {
+    MANAGER = 0;
+    CLIENT = 1;
+    COURIER = 2;
+}
+
+message CourierWorkingShiftStates_ {
+  enum CourierWorkingShiftStates {
+    STARTED = 0;
+    COMPLETED = 1;
+    FAILURE = 2;
+  }
+}
+
+message AppTypes_ {
+  enum AppTypes {
+    IOS = 0;
+    ANDROID = 1;
+    ADMIN = 2;
+    WEB = 3;
+  }
+}
+

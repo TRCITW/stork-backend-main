@@ -1,0 +1,31 @@
+syntax="proto3";
+
+package goods;
+
+import "google/protobuf/empty.proto";
+import "entity.proto";
+import "dto.proto";
+
+service GoodsService {
+  rpc FetchGoods(FetchGoodsRequest) returns (FetchGoodsResponse);
+  rpc FetchGoodModel(FetchGoodModelRequest) returns (entity.Good);
+}
+
+//request--------------------------------------
+
+message FetchGoodModelRequest {
+  int64 good_id = 1;
+}
+
+message FetchGoodsRequest {
+  optional int64 good_category_id = 1;
+  optional dto.FetchRequest fetch_dto = 2;
+}
+
+//responses--------------------------------------
+
+message FetchGoodsResponse {
+  repeated entity.Good data = 1;
+}
+
+
