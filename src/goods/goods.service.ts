@@ -176,9 +176,15 @@ export class GoodsService {
             where: {
                 goodId: Number(goodId)
             },
+            include: {
+                good: true
+            }
         })
         return {
-            data: data.map(i => i as GoodDiscount)
+            data: data.map(i => ({
+                ...i,
+                good: i.good as Good
+            } as GoodDiscount))
         }
     }
 
