@@ -468,6 +468,7 @@ enum OrdersStates {
   DELIVERY
   DELIVERED
   CANCELED
+  CLIENT_CHECKED
 
   @@map("orders_states")
 }
