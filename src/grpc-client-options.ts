@@ -9,7 +9,7 @@ export const grpcClientOptions: GrpcOptions = addReflectionToGrpcConfig({
             enums: String,
         },
         package: [
-            'auth', 'dto', 'entity', 'categories', 'filter', 'goods', 'clients'
+            'auth', 'dto', 'entity', 'categories', 'filter', 'goods', 'clients', 'orders', 'courier'
         ],
         url: 'localhost:60101',
         protoPath: [
@@ -20,6 +20,8 @@ export const grpcClientOptions: GrpcOptions = addReflectionToGrpcConfig({
             join(__dirname, '/proto/goods.proto'),
             join(__dirname, '/proto/categories.proto'),
             join(__dirname, '/proto/clients.proto'),
+            join(__dirname, '/proto/orders.proto'),
+            join(__dirname, '/proto/courier.proto'),
         ],
     },
 })

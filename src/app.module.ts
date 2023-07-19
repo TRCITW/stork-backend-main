@@ -9,6 +9,7 @@ import { FilterModule } from './filter/filter.module';
 import { ClientsModule } from './clients/clients.module';
 import { GoodsModule } from './goods/goods.module';
 import { CourierModule } from './courier/courier.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   controllers: [],
@@ -34,7 +35,9 @@ import { CourierModule } from './courier/courier.module';
 
     GoodsModule,
 
-    CourierModule
+    CourierModule,
+
+    OrdersModule
   ],
 })
 export class AppModule {}

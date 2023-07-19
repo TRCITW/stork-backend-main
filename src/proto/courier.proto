@@ -1,0 +1,38 @@
+syntax="proto3";
+
+package courier;
+
+import "google/protobuf/empty.proto";
+import "entity.proto";
+import "dto.proto";
+
+service CourierService {
+  rpc StartShift(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc CompleteShift(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc FetchAvailableTasks(dto.FetchRequest) returns (FetchTaskResponse);
+  rpc FetchCourierTasks(google.protobuf.Empty) returns (FetchTaskResponse);
+  rpc StartDelivery(StartDeliveryRequest) returns (google.protobuf.Empty);
+  rpc ReadyDelivery(ReadyDeliveryRequest) returns (google.protobuf.Empty);
+  rpc DeliveryTaskCompleted(DeliveryTaskCompletedRequest) returns (google.protobuf.Empty);
+  rpc FetchTaskHistory(dto.FetchRequest) returns (FetchTaskResponse);
+}
+
+//request--------------------------------------
+
+message StartDeliveryRequest {
+  optional int64 order_id = 1;
+}
+
+message ReadyDeliveryRequest {
+  optional int64 task_id = 1;
+}
+
+message DeliveryTaskCompletedRequest {
+  optional int64 task_id = 1;
+}
+
+//responses--------------------------------------
+
+message FetchTaskResponse {
+  repeated entity.CourierDeliveryTask data = 1;
+}

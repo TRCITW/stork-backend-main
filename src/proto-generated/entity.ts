@@ -129,6 +129,44 @@ export interface ClientAddress {
   client?: Client | undefined;
 }
 
+export interface CourierDeliveryTask {
+  id: number;
+  createdAt?: Date | undefined;
+  completedAt?: Date | undefined;
+  completedAtLocationId?: number | undefined;
+  courierId?: number | undefined;
+  orderId?: number | undefined;
+  reward?: number | undefined;
+  state?: CourierDeliveryTaskStates_CourierDeliveryTaskStates | undefined;
+  courier?: Courier | undefined;
+}
+
+export interface Courier {
+  id: number;
+  createdAt?: Date | undefined;
+  name?: string | undefined;
+  email?: string | undefined;
+  phone?: string | undefined;
+  firebasePushToken?: string | undefined;
+  isPushEnabled?: boolean | undefined;
+  avatarId?: number | undefined;
+  avatar?: Media | undefined;
+}
+
+export interface Order {
+  id: number;
+  createdAt?: Date | undefined;
+  clientId?: number | undefined;
+  totalAmount?: number | undefined;
+  orderState?: OrdersStates_OrdersStates | undefined;
+  packages?: number | undefined;
+  weightKg?: number | undefined;
+  clientAddressId?: number | undefined;
+  comment?: string | undefined;
+  client?: Client | undefined;
+  clientAddress?: ClientAddress | undefined;
+}
+
 export interface CourierDeliveryTaskStates {
 }
 

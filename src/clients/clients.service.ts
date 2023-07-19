@@ -34,6 +34,31 @@ export class ClientsService {
         })
     }
 
+    async validateClientAddress() {
+    }
+
+    async updateClientName(userId: number, name?: string) {
+        await this.database.clients.update({
+            where: {
+                id: userId
+            },
+            data: {
+                name
+            }
+        })
+    }
+
+    async updateClientEmail(userId: number, email?: string) {
+        await this.database.clients.update({
+            where: {
+                id: userId
+            },
+            data: {
+                email: email
+            }
+        })
+    }
+
     async fetchUserRecommendations(userId: number, limit?: number, offset?: number) {
         const data = await this.database.clientRecommendations.findMany({
             where: {
@@ -96,6 +121,9 @@ export class ClientsService {
                 firebasePushToken: token
             }
         })
+    }
+
+    async destroyClientAccount(userId: number) {
     }
 
 

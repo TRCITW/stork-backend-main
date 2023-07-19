@@ -24,11 +24,15 @@ export class AuthService {
                 phone
             }
         })
-
-        console.log(isUser)
         return {
             isRegistered: isUser != undefined
         }
+    }
+
+    async logoutCourier() {
+    }
+
+    async logoutClient() {
     }
 
     private generateToken(id: number): SuccessAuthDto {

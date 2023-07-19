@@ -1,0 +1,36 @@
+syntax="proto3";
+
+package orders;
+
+import "google/protobuf/empty.proto";
+import "entity.proto";
+import "dto.proto";
+
+service OrdersService {
+  rpc CreateOrder(CreateOrderRequest) returns (entity.Order);
+  rpc RepeatOrder(RepeatOrderRequest) returns (entity.Order);
+  rpc CancelOrder(CancelOrderRequest) returns (google.protobuf.Empty);
+}
+
+//request--------------------------------------
+
+message CreateOrderRequest {
+  message CreateOrderItem {
+    optional int64 good_id = 1;
+    optional int32 amount = 2;
+  }
+
+  optional int64 client_id = 1;
+  optional int64 client_address_id = 2;
+  repeated CreateOrderItem goods = 3;
+}
+
+message RepeatOrderRequest {
+  optional int64 order_id = 1;
+}
+
+message CancelOrderRequest {
+  optional int64 order_id = 1;
+}
+
+//responses--------------------------------------

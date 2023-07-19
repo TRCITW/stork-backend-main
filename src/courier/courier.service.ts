@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {DatabaseService} from "../database/database.service";
 import {RpcException} from "@nestjs/microservices";
+import {CourierDeliveryTask} from "../proto-generated/entity";
 
 @Injectable()
 export class CourierService {
@@ -8,7 +9,7 @@ export class CourierService {
     constructor(private readonly database: DatabaseService) {
     }
 
-    async startSight(userId: number) {
+    async startShift(userId: number) {
         await this.database.courierWorkingShift.updateMany({
             where: {
                 courierId: userId,
@@ -57,7 +58,9 @@ export class CourierService {
                 }
             }
         })
-        return { data }
+        return {
+            data: data.map(i => i as CourierDeliveryTask)
+        }
     }
 
     async fetchCourierTasks(userId: number) {
@@ -80,10 +83,12 @@ export class CourierService {
                 }
             }
         })
-        return { data }
+        return {
+            data: data.map(i => i as CourierDeliveryTask)
+        }
     }
 
-    async startDelivery(userId: number, orderId: number) {
+    async startDelivery(userId: number, orderId?: number) {
         const order = await this.database.orders.findFirst({
             where: {
                 id: orderId
@@ -106,7 +111,7 @@ export class CourierService {
         })
     }
 
-    async readyDelivery(taskId: number) {
+    async readyDelivery(taskId?: number) {
         const task = await this.database.courierDeliveryTask.findFirst({
             where: {
                 id: taskId
@@ -124,7 +129,7 @@ export class CourierService {
         })
     }
 
-    async deliveryTaskCompleted(taskId: number) {
+    async deliveryTaskCompleted(taskId?: number) {
         const task = await this.database.courierDeliveryTask.findFirst({
             where: {
                 id: taskId
@@ -161,13 +166,9 @@ export class CourierService {
                 createdAt: 'desc'
             }
         })
-        return { data }
-    }
-
-    async login() {
-    }
-
-    async logout() {
+        return {
+            data: data.map(i => i as CourierDeliveryTask)
+        }
     }
 
 
