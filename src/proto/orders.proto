@@ -10,9 +10,14 @@ service OrdersService {
   rpc CreateOrder(CreateOrderRequest) returns (entity.Order);
   rpc RepeatOrder(RepeatOrderRequest) returns (entity.Order);
   rpc CancelOrder(CancelOrderRequest) returns (google.protobuf.Empty);
+  rpc FetchOrderModel(FetchOrderModelRequest) returns (entity.Order);
 }
 
 //request--------------------------------------
+
+message FetchOrderModelRequest {
+  int64 order_id = 1;
+}
 
 message CreateOrderRequest {
   message CreateOrderItem {

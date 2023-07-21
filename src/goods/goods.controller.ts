@@ -51,6 +51,7 @@ export class GoodsController implements GoodsServiceController {
   searchGoods(request: SearchGoodsRequest, metadata?: Metadata): Promise<FetchGoodsResponse> | Observable<FetchGoodsResponse> | FetchGoodsResponse {
     return this.goodsService.searchProducts(
         request.value,
+        request.goodCategoryId,
         request.fetchDto?.limit,
         request.fetchDto?.offset
     )

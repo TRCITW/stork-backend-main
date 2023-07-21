@@ -95,7 +95,8 @@ message Client {
   optional bool is_mailing_enabled = 10;
 
   optional Media avatar = 11;
-  repeated ClientAddress addresses = 12;
+  repeated ClientPaymentMethod client_payment_methods = 12;
+  repeated ClientAddress addresses = 13;
 }
 
 message ClientAddress {
@@ -151,6 +152,14 @@ message Order {
 
   optional Client client = 10;
   optional ClientAddress client_address = 11;
+}
+
+message ClientPaymentMethod {
+  int64 id = 1;
+  optional google.protobuf.Timestamp created_at = 2;
+  optional PaymentMethods type = 3;
+  optional string credentials = 4;
+  optional string description = 5;
 }
 
 enum PushCampaignStates {
@@ -212,3 +221,6 @@ message AppTypes_ {
   }
 }
 
+enum PaymentMethods {
+    CARD = 0;
+}

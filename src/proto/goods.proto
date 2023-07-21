@@ -38,8 +38,9 @@ message FetchRecommendedGoodsRequest {
 }
 
 message SearchGoodsRequest {
-  string value = 1;
-  optional dto.FetchRequest fetch_dto = 4;
+  optional int64 good_category_id = 1;
+  string value = 2;
+  optional dto.FetchRequest fetch_dto = 3;
 }
 
 message FetchDiscountsRequest {

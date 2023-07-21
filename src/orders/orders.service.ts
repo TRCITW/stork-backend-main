@@ -91,6 +91,31 @@ export class OrdersService {
         })
     }
 
+    async fetchOrderModel(orderId?: number) {
+        const order = await this.database.orders.findFirst({
+            where: {
+                id: orderId
+            },
+            include: {
+                client: {
+                    include: {
+                        clientAddresses: true
+                    }
+                },
+                orderToGoods: {
+                    include: {
+                        good: true
+                    }
+                }
+            }
+        })
+        if (!order) throw new RpcException('order is undefined')
+        return {
+            ...order,
+            client: undefined
+        } as Order
+    }
+
     private async requestRefund() {
     }
 

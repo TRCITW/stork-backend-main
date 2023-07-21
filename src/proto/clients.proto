@@ -7,7 +7,7 @@ import "entity.proto";
 import "dto.proto";
 
 service ClientsService {
-  rpc UpdateFBMessagingToken(UpdateFBMessagingTokenRequest) returns (google.protobuf.Empty);
+  rpc UpdateFirebaseMessagingToken(UpdateFBMessagingTokenRequest) returns (google.protobuf.Empty);
   rpc CreateAddress(CreateAddressRequest) returns (entity.ClientAddress);
   rpc DestroyAddress(dto.DeleteRequest) returns (google.protobuf.Empty);
   rpc FetchClientRecommendations(dto.FetchRequest) returns (FetchClientRecommendationsResponse);

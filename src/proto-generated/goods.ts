@@ -29,6 +29,7 @@ export interface FetchRecommendedGoodsRequest {
 }
 
 export interface SearchGoodsRequest {
+  goodCategoryId?: number | undefined;
   value: string;
   fetchDto?: FetchRequest | undefined;
 }

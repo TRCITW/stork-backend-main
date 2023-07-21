@@ -3,14 +3,15 @@ syntax="proto3";
 package auth;
 
 import "google/protobuf/empty.proto";
+import "entity.proto";
 
 service AuthService {
   rpc RequestSmsCode(RequestSmsCodeRequest) returns (RequestSmsCodeResponse);
-  rpc Login(LoginRequest) returns (LoginResponse);
-  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc LoginClient(LoginClientRequest) returns (LoginResponse);
+  rpc LoginCourier(LoginCourierRequest) returns (LoginResponse);
   rpc UpdateAccessToken(google.protobuf.Empty) returns (UpdateAccessTokenResponse);
-  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
-  rpc RecoverPass(RecoverPassRequest) returns (google.protobuf.Empty);
+  rpc LogoutClient(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc LogoutCourier(google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
 //request--------------------------------------
@@ -19,13 +20,18 @@ message RequestSmsCodeRequest {
   string phone = 1;
 }
 
-message LoginRequest {
+message LoginClientRequest {
+  string phone = 1;
+  string code = 2;
+  optional bool is_registered = 3;
+}
+
+message LoginCourierRequest {
+  string phone = 1;
+  string code = 2;
 }
 
 message RegisterRequest {
-}
-
-message RecoverPassRequest {
 }
 
 
@@ -33,9 +39,12 @@ message RecoverPassRequest {
 
 message RequestSmsCodeResponse {
   bool is_registered = 1;
+  entity.UserTypes user_type = 2;
 }
 
 message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
 }
 
 message RegisterResponse {

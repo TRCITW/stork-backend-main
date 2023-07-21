@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import {
   CancelOrderRequest,
-  CreateOrderRequest, ORDERS_SERVICE_NAME,
+  CreateOrderRequest, FetchOrderModelRequest, ORDERS_SERVICE_NAME,
   OrdersServiceController,
   RepeatOrderRequest
 } from "../proto-generated/orders";
@@ -29,6 +29,11 @@ export class OrdersController implements OrdersServiceController {
   @GrpcMethod(ORDERS_SERVICE_NAME)
   repeatOrder(request: RepeatOrderRequest, metadata?: Metadata): Promise<Order> | Observable<Order> | Order {
     return this.ordersService.repeatOrder(request.orderId)
+  }
+
+  @GrpcMethod(ORDERS_SERVICE_NAME)
+  fetchOrderModel(request: FetchOrderModelRequest, metadata?: Metadata): Promise<Order> | Observable<Order> | Order {
+    return this.ordersService.fetchOrderModel(request.orderId)
   }
 
 }

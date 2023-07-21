@@ -76,13 +76,14 @@ model Clients {
   isMailingEnabled      Boolean?                @map("is_mailing_enabled")
   avatarId              Int?                    @map("avatar_id")
   isAllowMailing        Boolean?                @map("is_allow_mailing")
+  authSessions          AuthSessions[]
   bankCardTokens        BankCardTokens[]
   clientAddresses       ClientAddresses[]
+  clientPaymentMethods  ClientPaymentMethods[]
   clientRecommendations ClientRecommendations[]
   clientWishlistGoods   ClientWishlistGoods[]
   avatar                Media?                  @relation(fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   clientsPhoneAuth      ClientsPhoneAuth[]
-  managerPasswordAuth   ManagerPasswordAuth[]
   orders                Orders[]
   pushCampaignClients   PushCampaignClients[]
 
@@ -167,6 +168,7 @@ model Couriers {
   firebasePushToken   String?               @map("firebase_push_token") @db.VarChar
   isPushEnabled       Boolean?              @map("is_push_enabled")
   avatarId            Int?                  @map("avatar_id")
+  auth_sessions       AuthSessions[]
   courierDeliveryTask CourierDeliveryTask[]
   courierFines        CourierFines[]
   courierLocations    CourierLocations[]
@@ -255,17 +257,19 @@ model ManagerPasswordAuth {
   login          String    @unique @db.VarChar
   passwordSha256 String?   @map("password_sha256") @db.VarChar
   managerId      Int?      @map("manager_id")
-  client         Clients?  @relation(fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  manager        Managers? @relation(fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("manager_password_auth")
 }
 
 model Managers {
-  id          Int           @id @default(autoincrement())
-  createdAt   DateTime?     @default(now()) @map("created_at") @db.Timestamp(6)
-  managerType ManagerTypes? @map("manager_type")
-  name        String?       @db.VarChar
-  login       String        @unique @db.VarChar
+  id                  Int                   @id @default(autoincrement())
+  createdAt           DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
+  managerType         ManagerTypes?         @map("manager_type")
+  name                String?               @db.VarChar
+  login               String                @unique @db.VarChar
+  auth_sessions       AuthSessions[]
+  managerPasswordAuth ManagerPasswordAuth[]
 
   @@map("managers")
 }
@@ -431,6 +435,36 @@ model AppVersions {
   @@map("app_versions")
 }
 
+model AuthSessions {
+  id                   Int        @id @default(autoincrement())
+  createdAt            DateTime?  @default(now()) @map("created_at") @db.Timestamp(6)
+  clientId             Int?       @map("client_id")
+  managerId            Int?       @map("manager_id")
+  courierId            Int?       @map("courier_id")
+  type                 UserTypes?
+  refreshToken         String     @map("refresh_token") @db.VarChar
+  isActive             Boolean?   @default(true) @map("is_active")
+  lastIpAddress        String?    @map("last_ip_address") @db.VarChar
+  lastRefreshTokenTime DateTime?  @map("last_refresh_token_time") @db.Timestamp(6)
+  client               Clients?   @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  courier              Couriers?  @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  manager              Managers?  @relation(fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("auth_sessions")
+}
+
+model ClientPaymentMethods {
+  id          Int             @id @default(autoincrement())
+  createdAt   DateTime?       @default(now()) @map("created_at") @db.Timestamp(6)
+  clientId    Int?            @map("client_id")
+  type        PaymentMethods?
+  credentials String?         @db.VarChar
+  description String?         @db.VarChar
+  client      Clients?        @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("client_payment_methods")
+}
+
 enum CourierDeliveryTaskStates {
   CREATED
   IN_WORK
@@ -497,4 +531,10 @@ enum AppTypes {
   WEB
 
   @@map("app_types")
+}
+
+enum PaymentMethods {
+  CARD
+
+  @@map("payment_methods")
 }

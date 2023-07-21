@@ -33,7 +33,7 @@ export interface FetchClientRecommendationsResponse {
 export const CLIENTS_PACKAGE_NAME = "clients";
 
 export interface ClientsServiceClient {
-  updateFbMessagingToken(request: UpdateFBMessagingTokenRequest, metadata?: Metadata): Observable<Empty>;
+  updateFirebaseMessagingToken(request: UpdateFBMessagingTokenRequest, metadata?: Metadata): Observable<Empty>;
 
   createAddress(request: CreateAddressRequest, metadata?: Metadata): Observable<ClientAddress>;
 
@@ -48,7 +48,7 @@ export interface ClientsServiceClient {
 }
 
 export interface ClientsServiceController {
-  updateFbMessagingToken(request: UpdateFBMessagingTokenRequest, metadata?: Metadata): void;
+  updateFirebaseMessagingToken(request: UpdateFBMessagingTokenRequest, metadata?: Metadata): void;
 
   createAddress(
     request: CreateAddressRequest,
@@ -71,7 +71,7 @@ export interface ClientsServiceController {
 export function ClientsServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = [
-      "updateFbMessagingToken",
+      "updateFirebaseMessagingToken",
       "createAddress",
       "destroyAddress",
       "fetchClientRecommendations",

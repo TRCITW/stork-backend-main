@@ -26,6 +26,10 @@ export enum UserTypes {
   COURIER = "COURIER",
 }
 
+export enum PaymentMethods {
+  CARD = "CARD",
+}
+
 export interface GoodCategory {
   id: number;
   createdAt?: Date | undefined;
@@ -112,6 +116,7 @@ export interface Client {
   isPushEnabled?: boolean | undefined;
   isMailingEnabled?: boolean | undefined;
   avatar?: Media | undefined;
+  clientPaymentMethods: ClientPaymentMethod[];
   addresses: ClientAddress[];
 }
 
@@ -165,6 +170,14 @@ export interface Order {
   comment?: string | undefined;
   client?: Client | undefined;
   clientAddress?: ClientAddress | undefined;
+}
+
+export interface ClientPaymentMethod {
+  id: number;
+  createdAt?: Date | undefined;
+  type?: PaymentMethods | undefined;
+  credentials?: string | undefined;
+  description?: string | undefined;
 }
 
 export interface CourierDeliveryTaskStates {

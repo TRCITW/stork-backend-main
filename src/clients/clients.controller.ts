@@ -1,10 +1,11 @@
-import { Controller } from '@nestjs/common';
-import { ClientsService } from './clients.service';
+import {Controller} from '@nestjs/common';
+import {ClientsService} from './clients.service';
 import {
   CLIENTS_SERVICE_NAME,
   ClientsServiceController,
   CreateAddressRequest,
-  FetchClientRecommendationsResponse, UpdateFBMessagingTokenRequest
+  FetchClientRecommendationsResponse,
+  UpdateFBMessagingTokenRequest
 } from "../proto-generated/clients";
 import {Metadata} from "@grpc/grpc-js";
 import {Client, ClientAddress} from "../proto-generated/entity";
@@ -17,6 +18,13 @@ import {GrpcMethod} from "@nestjs/microservices";
 export class ClientsController implements ClientsServiceController {
 
   constructor(private readonly clientsService: ClientsService) {
+  }
+
+  @GrpcMethod(CLIENTS_SERVICE_NAME)
+  updateFirebaseMessagingToken(request: UpdateFBMessagingTokenRequest, metadata?: Metadata | undefined): void {
+    // console.log(11111)
+    // todo: - replace userId
+    this.clientsService.saveFBMessagingToken(1, request.token)
   }
 
   @GrpcMethod(CLIENTS_SERVICE_NAME)
@@ -42,10 +50,6 @@ export class ClientsController implements ClientsServiceController {
     return this.clientsService.fetchUserRecommendations(1, request.limit, request.offset)
   }
 
-  @GrpcMethod(CLIENTS_SERVICE_NAME)
-  updateFbMessagingToken(request: UpdateFBMessagingTokenRequest, metadata?: Metadata): void {
-    // todo: - replace userId
-    this.clientsService.saveFBMessagingToken(1, request.token)
-  }
+
 
 }

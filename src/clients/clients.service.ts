@@ -4,7 +4,7 @@ import {CreateClientAddressDto} from "./dto/create-client-address.dto";
 import {
     Brand,
     Client,
-    ClientAddress, Good,
+    ClientAddress, ClientPaymentMethod, Good,
     GoodCategory,
     GoodDiscount,
     ManufacturerCountry,
@@ -102,12 +102,14 @@ export class ClientsService {
             },
             include: {
                 avatar: true,
-                clientAddresses: true
+                clientAddresses: true,
+                clientPaymentMethods: true
             }
         })
         return {
             ...data,
-            addresses: data?.clientAddresses.map(i => i as ClientAddress),
+            addresses: data?.clientAddresses.map(i => i as ClientAddress) ?? [],
+            clientPaymentMethods: data?.clientPaymentMethods.map(i => i as ClientPaymentMethod) ?? [],
             avatar: data?.avatar as Media
         } as Client
     }
@@ -121,6 +123,17 @@ export class ClientsService {
                 firebasePushToken: token
             }
         })
+    }
+
+    async fetchClientOrders(userId: number) {
+        const data = await this.database.orders.findMany({
+            where: {
+                clientId: userId
+            }
+        })
+        return {
+            data
+        }
     }
 
     async destroyClientAccount(userId: number) {

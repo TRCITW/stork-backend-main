@@ -77,13 +77,14 @@ export class GoodsService {
     }
 
 
-    async searchProducts(value: string, limit?: number, skip?: number) {
+    async searchProducts(value: string, categoryId?: number, limit?: number, skip?: number) {
         const data = await this.database.goods.findMany({
             where: {
                 name: {
                     contains: String(value ?? ''),
                     mode: 'insensitive'
-                }
+                },
+                goodCategoryId: categoryId
             },
             take: limit,
             skip: skip,

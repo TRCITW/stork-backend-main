@@ -1,3 +1,4 @@
 export interface SuccessAuthDto {
-    token: string
+    accessToken: string,
+    refreshToken: string
 }
