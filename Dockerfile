@@ -11,7 +11,7 @@ FROM node:20-alpine
 WORKDIR /opt/app
 ADD package.json ./
 RUN npm install --only=prod
-COPY --from=build /opt/app/.dist ./.dist
+COPY --from=build /opt/app/dist ./dist
 RUN npx prisma generate
 
 CMD ["npm", "start"]
