@@ -11,6 +11,8 @@ WORKDIR /opt/app
 ADD package.json ./
 RUN npm install --only=prod
 COPY --from=build /opt/app/dist ./dist
+COPY --from=build /opt/app/tsconfig.json .
+COPY --from=build /opt/app/nest-cli.json .
 RUN npx prisma generate
 
 CMD ["npm", "start"]
