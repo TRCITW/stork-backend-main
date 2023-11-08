@@ -59,8 +59,8 @@ model ClientWishlistGoods {
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
   clientId  Int?      @map("client_id")
   goodId    Int?      @map("good_id")
-  clients   Clients?  @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  goods     Goods?    @relation(fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  client    Clients?  @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  good      Goods?    @relation(fields: [goodId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("client_wishlist_goods")
 }
@@ -76,6 +76,8 @@ model Clients {
   isMailingEnabled      Boolean?                @map("is_mailing_enabled")
   avatarId              Int?                    @map("avatar_id")
   isAllowMailing        Boolean?                @map("is_allow_mailing")
+  isBanned              Boolean?                @default(false) @map("is_banned")
+  banReason             String?                 @map("ban_reason") @db.VarChar
   authSessions          AuthSessions[]
   bankCardTokens        BankCardTokens[]
   clientAddresses       ClientAddresses[]
@@ -110,17 +112,17 @@ model ConfirmationSmsCodes {
 }
 
 model CourierDeliveryTask {
-  id                    Int                        @id @default(autoincrement())
-  createdAt             DateTime?                  @default(now()) @map("created_at") @db.Timestamp(6)
-  completedAt           DateTime?                  @map("completed_at") @db.Timestamp(6)
-  completedAtLocationId Int?                       @map("completed_at_location_id")
-  courierId             Int?                       @map("courier_id")
-  orderId               Int?                       @map("order_id")
-  reward                Float?
-  state                 CourierDeliveryTaskStates?
-  courierLocation       CourierLocations?          @relation(fields: [completedAtLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courier_delivery_task_completedat_location_id_fkey")
-  courier               Couriers?                  @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  order                 Orders?                    @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                      Int                        @id @default(autoincrement())
+  createdAt               DateTime?                  @default(now()) @map("created_at") @db.Timestamp(6)
+  completedAt             DateTime?                  @map("completed_at") @db.Timestamp(6)
+  completedAtLocationId   Int?                       @map("completed_at_location_id")
+  courierId               Int?                       @map("courier_id")
+  orderId                 Int?                       @map("order_id")
+  reward                  Float?
+  state                   CourierDeliveryTaskStates? @default(CREATED)
+  courierCompleteLocation CourierLocations?          @relation(fields: [completedAtLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courier_delivery_task_completedat_location_id_fkey")
+  courier                 Couriers?                  @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  order                   Orders?                    @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("courier_delivery_task")
 }
@@ -137,12 +139,12 @@ model CourierFines {
 }
 
 model CourierLocations {
-  id                  Int                   @id @default(autoincrement())
-  createdAt           DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
-  location            String?               @db.VarChar
-  courierId           Int?                  @map("courier_id")
-  courierDeliveryTask CourierDeliveryTask[]
-  courier             Couriers?             @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   Int                   @id @default(autoincrement())
+  createdAt            DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
+  location             String?               @db.VarChar
+  courierId            Int?                  @map("courier_id")
+  courierDeliveryTasks CourierDeliveryTask[]
+  courier              Couriers?             @relation(fields: [courierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("courier_locations")
 }
@@ -160,21 +162,23 @@ model CourierWorkingShift {
 }
 
 model Couriers {
-  id                  Int                   @id @default(autoincrement())
-  createdAt           DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
-  name                String?               @db.VarChar
-  email               String?               @unique @db.VarChar
-  phone               String?               @unique @db.VarChar
-  firebasePushToken   String?               @map("firebase_push_token") @db.VarChar
-  isPushEnabled       Boolean?              @map("is_push_enabled")
-  avatarId            Int?                  @map("avatar_id")
-  auth_sessions       AuthSessions[]
-  courierDeliveryTask CourierDeliveryTask[]
-  courierFines        CourierFines[]
-  courierLocations    CourierLocations[]
-  courierWorkingShift CourierWorkingShift[]
-  media               Media?                @relation(fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  couriersPhoneAuth   CouriersPhoneAuth[]
+  id                   Int                   @id @default(autoincrement())
+  createdAt            DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
+  name                 String?               @db.VarChar
+  email                String?               @unique @db.VarChar
+  phone                String?               @unique @db.VarChar
+  firebasePushToken    String?               @map("firebase_push_token") @db.VarChar
+  isPushEnabled        Boolean?              @map("is_push_enabled")
+  avatarId             Int?                  @map("avatar_id")
+  isBanned             Boolean?              @default(false) @map("is_banned")
+  banReason            String?               @map("ban_reason") @db.VarChar
+  auth_sessions        AuthSessions[]
+  courierDeliveryTasks CourierDeliveryTask[]
+  courierFines         CourierFines[]
+  courierLocations     CourierLocations[]
+  courierWorkingShifts CourierWorkingShift[]
+  media                Media?                @relation(fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  couriersPhoneAuth    CouriersPhoneAuth[]
 
   @@map("couriers")
 }
@@ -313,29 +317,29 @@ model OrderToGoods {
 }
 
 model Orders {
-  id                  Int                   @id @default(autoincrement())
-  createdAt           DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
-  clientId            Int?                  @map("client_id")
-  totalAmount         Float?                @map("total_amount")
-  orderState          OrdersStates?         @map("order_state")
-  packages            Int?
-  weightKg            Float?                @map("weight_kg")
-  clientAddressId     Int?                  @map("client_address_id")
-  comment             String?               @db.VarChar
-  courierDeliveryTask CourierDeliveryTask[]
-  orderToGoods        OrderToGoods[]
-  clientAddress       ClientAddresses?      @relation(fields: [clientAddressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  client              Clients?              @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   Int                   @id @default(autoincrement())
+  createdAt            DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
+  clientId             Int?                  @map("client_id")
+  totalAmount          Float?                @map("total_amount")
+  orderState           OrdersStates?         @map("order_state")
+  packages             Int?
+  weightKg             Float?                @map("weight_kg")
+  clientAddressId      Int?                  @map("client_address_id")
+  comment              String?               @db.VarChar
+  courierDeliveryTasks CourierDeliveryTask[]
+  orderToGoods         OrderToGoods[]
+  clientAddress        ClientAddresses?      @relation(fields: [clientAddressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  client               Clients?              @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("orders")
 }
 
 model PreviewGoodCategoryMedia {
-  id                                             Int             @id @default(autoincrement())
-  goodCategoryId                                 Int?            @map("good_category_id")
-  media                                          Int?
-  good_category                                  GoodCategories? @relation(fields: [goodCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  media_preview_good_category_media_mediaTomedia Media?          @relation("preview_good_category_media_mediaTomedia", fields: [media], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id             Int             @id @default(autoincrement())
+  goodCategoryId Int?            @map("good_category_id")
+  mediaId        Int?            @map("media")
+  goodCategory   GoodCategories? @relation(fields: [goodCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  media          Media?          @relation("preview_good_category_media_mediaTomedia", fields: [mediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("preview_good_category_media")
 }
@@ -399,16 +403,16 @@ model StoreAddresses {
 }
 
 model Stores {
-  id              Int              @id @default(autoincrement())
-  createdAt       DateTime?        @default(now()) @map("created_at") @db.Timestamp(6)
-  name            String?          @db.VarChar
-  IIN             String?          @db.VarChar
-  OGRN            String?          @db.VarChar
-  mediaId         Int?             @map("media_id")
-  remnants        Remnants[]
-  store_addresses StoreAddresses[]
-  media           Media?           @relation(fields: [mediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  storesMedia     StoresMedia[]
+  id             Int              @id @default(autoincrement())
+  createdAt      DateTime?        @default(now()) @map("created_at") @db.Timestamp(6)
+  name           String?          @db.VarChar
+  IIN            String?          @db.VarChar
+  OGRN           String?          @db.VarChar
+  mediaId        Int?             @map("media_id")
+  remnants       Remnants[]
+  storeAddresses StoreAddresses[]
+  media          Media?           @relation(fields: [mediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  storesMedia    StoresMedia[]
 
   @@map("stores")
 }
