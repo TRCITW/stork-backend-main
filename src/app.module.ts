@@ -17,7 +17,7 @@ import { OrdersModule } from './orders/orders.module';
   imports: [
 
     ConfigModule.forRoot({
-      envFilePath: ['.development.env'],
+      envFilePath: ['.env'],
       isGlobal: true,
     }),
 

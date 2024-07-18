@@ -11,7 +11,7 @@ export const grpcClientOptions: GrpcOptions = addReflectionToGrpcConfig({
         package: [
             'auth', 'dto', 'entity', 'categories', 'filter', 'goods', 'clients', 'orders', 'courier'
         ],
-        url: 'localhost:60101',
+        url: '0.0.0.0:3001',
         protoPath: [
             join(__dirname, '/proto/auth.proto'),
             join(__dirname, '/proto/dto.proto'),

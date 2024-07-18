@@ -8,7 +8,7 @@ async function bootstrap() {
 
   app.enableCors()
 
-  const port = process.env.PORT ?? 60_000
+  const port = process.env.PORT ?? 3000
 
   await app.startAllMicroservices()
   await app.listen(port, () => console.log(`Server started on port ${port}`))
