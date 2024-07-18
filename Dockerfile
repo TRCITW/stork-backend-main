@@ -4,7 +4,7 @@ WORKDIR /opt/app
 
 ADD *.json ./
 
-RUN npm install
+RUN npm ci --silent
 ADD . .
 RUN npx prisma generate && \
     npm run build
@@ -13,8 +13,9 @@ FROM node:21-alpine
 
 WORKDIR /opt/app
 
-ADD package.json ./
-RUN npm install --only=prod
+ADD *.json ./
+
+RUN npm ci --production --silent
 
 COPY --from=build /opt/app/dist ./dist
 COPY --from=build /opt/app/prisma ./prisma
