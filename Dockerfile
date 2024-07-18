@@ -1,4 +1,4 @@
-FROM node:20-alpine as build
+FROM node:21-alpine as build
 LABEL authors="Andrew"
 WORKDIR /opt/app
 
@@ -9,7 +9,7 @@ ADD . .
 RUN npx prisma generate && \
     npm run build
 
-FROM node:20-alpine
+FROM node:21-alpine
 
 WORKDIR /opt/app
 
@@ -17,6 +17,7 @@ ADD package.json ./
 RUN npm install --only=prod
 
 COPY --from=build /opt/app/dist ./dist
+COPY --from=build /opt/app/prisma ./prisma
 COPY --from=build /opt/app/tsconfig.json .
 COPY --from=build /opt/app/nest-cli.json .
 
