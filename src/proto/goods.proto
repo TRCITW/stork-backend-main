@@ -13,6 +13,7 @@ service GoodsService {
   rpc FetchRecommendedGoods(FetchRecommendedGoodsRequest) returns (FetchGoodsResponse);
   rpc SearchGoods(SearchGoodsRequest) returns (FetchGoodsResponse);
   rpc FetchDiscounts(FetchDiscountsRequest) returns (FetchDiscountsResponse);
+  rpc FetchFavoriteGoods(dto.FetchRequest) returns (FetchGoodsResponse);
 }
 
 //request--------------------------------------

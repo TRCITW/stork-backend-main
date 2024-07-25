@@ -189,4 +189,44 @@ export class GoodsService {
         }
     }
 
+    async fetchFavorite(clientId: number, take?: number, offset?: number) {
+        const data = await this.database.clientWishlistGoods.findMany({
+            where: {
+                clientId: clientId
+            },
+            include: {
+                good: {
+                    include: {
+                        brand: true,
+                        manufacturerCountry: true,
+                        remnants: true,
+                        goodCategory: true,
+                        goodDiscounts: true,
+                        goodsMedia: {
+                            include: {
+                                media: true
+                            }
+                        }
+                    }
+                }
+            },
+            take: take ?? 1000,
+            skip: offset ?? 0
+        })
+        const mapped = data
+            .map(m => m.good)
+            .filter(f => f !== undefined && f !== null)
+
+        return {
+            data: mapped.map(i => ({
+                ...i,
+                brand: i?.brand as Brand,
+                category: i?.goodCategory as GoodCategory,
+                manufacturerCountry: i?.manufacturerCountry as ManufacturerCountry,
+                discounts: i?.goodDiscounts.map(x => x as GoodDiscount) ?? [],
+                media: i?.goodsMedia.map(x => x.media as Media) ?? []
+            } as Good))
+        }
+    }
+
 }

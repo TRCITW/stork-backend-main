@@ -73,7 +73,7 @@ export interface ManufacturerCountry {
 export interface Media {
   id: number;
   createdAt?: Date | undefined;
-  description?: string | undefined;
+  v?: string | undefined;
   path?: string | undefined;
   mediaType?: MediaTypes | undefined;
   isArchived?: boolean | undefined;

@@ -60,6 +60,8 @@ export interface GoodsServiceClient {
   searchGoods(request: SearchGoodsRequest, metadata?: Metadata): Observable<FetchGoodsResponse>;
 
   fetchDiscounts(request: FetchDiscountsRequest, metadata?: Metadata): Observable<FetchDiscountsResponse>;
+
+  fetchFavoriteGoods(request: FetchRequest, metadata?: Metadata): Observable<FetchGoodsResponse>;
 }
 
 export interface GoodsServiceController {
@@ -86,6 +88,11 @@ export interface GoodsServiceController {
     request: FetchDiscountsRequest,
     metadata?: Metadata,
   ): Promise<FetchDiscountsResponse> | Observable<FetchDiscountsResponse> | FetchDiscountsResponse;
+
+  fetchFavoriteGoods(
+    request: FetchRequest,
+    metadata?: Metadata,
+  ): Promise<FetchGoodsResponse> | Observable<FetchGoodsResponse> | FetchGoodsResponse;
 }
 
 export function GoodsServiceControllerMethods() {
@@ -97,6 +104,7 @@ export function GoodsServiceControllerMethods() {
       "fetchRecommendedGoods",
       "searchGoods",
       "fetchDiscounts",
+      "fetchFavoriteGoods",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
