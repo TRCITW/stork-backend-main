@@ -29,7 +29,8 @@ export class GoodsController implements GoodsServiceController {
 
   @GrpcMethod(GOODS_SERVICE_NAME)
   fetchGoodModel(request: FetchGoodModelRequest, metadata?: Metadata): Promise<Good> | Observable<Good> | Good {
-    return this.goodsService.fetchProductModel(request.goodId)
+    return this.serializeToken(metadata)
+        .then(token => this.goodsService.fetchProductModel(token.id, request.goodId))
   }
 
   @GrpcMethod(GOODS_SERVICE_NAME)

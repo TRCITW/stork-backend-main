@@ -50,6 +50,7 @@ export interface Good {
   brandId?: number | undefined;
   goodCategoryId?: number | undefined;
   manufacturerCountryId?: number | undefined;
+  isFavorite?: boolean | undefined;
   brand?: Brand | undefined;
   category?: GoodCategory | undefined;
   manufacturerCountry?: ManufacturerCountry | undefined;
@@ -73,7 +74,7 @@ export interface ManufacturerCountry {
 export interface Media {
   id: number;
   createdAt?: Date | undefined;
-  v?: string | undefined;
+  description?: string | undefined;
   path?: string | undefined;
   mediaType?: MediaTypes | undefined;
   isArchived?: boolean | undefined;

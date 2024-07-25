@@ -48,7 +48,7 @@ export class GoodsService {
         }
     }
 
-    async fetchProductModel(id: number) {
+    async fetchProductModel(clientId: number, id: number) {
         const data = await this.database.goods.findFirst({
             where: {
                 id: Number(id)
@@ -66,8 +66,17 @@ export class GoodsService {
                 }
             }
         })
+
+        const favorites = await this.database.clientWishlistGoods.findFirst({
+            where: {
+                clientId: +clientId,
+                goodId: +id
+            }
+        })
+
         return {
             ...data,
+            isFavorite: favorites !== undefined && favorites !== null,
             brand: data?.brand as Brand,
             category: data?.goodCategory as GoodCategory,
             manufacturerCountry: data?.manufacturerCountry as ManufacturerCountry,

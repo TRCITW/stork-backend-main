@@ -24,11 +24,13 @@ message Good {
   optional int64 brand_id = 8;
   optional int64 good_category_id = 9;
   optional int64 manufacturer_country_id = 10;
+  optional bool is_favorite = 11;
 
-  optional Brand brand = 11;
-  optional GoodCategory category = 12;
-  optional ManufacturerCountry manufacturer_country = 13;
-  repeated GoodDiscount discounts = 14;
+
+  optional Brand brand = 12;
+  optional GoodCategory category = 13;
+  optional ManufacturerCountry manufacturer_country = 14;
+  repeated GoodDiscount discounts = 15;
 //  repeated RecommendedGood recommendations = 15;
   repeated Media media = 16;
 }
@@ -48,7 +50,7 @@ message ManufacturerCountry {
 message Media {
   int64 id = 1;
   optional google.protobuf.Timestamp created_at = 2;
-  optional string v = 3;
+  optional string description = 3;
   optional string path = 4;
   optional MediaTypes media_type = 5;
   optional bool is_archived = 6;
