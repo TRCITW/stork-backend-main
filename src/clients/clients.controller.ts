@@ -12,25 +12,27 @@ import {Client, ClientAddress} from "../proto-generated/entity";
 import {Observable} from "rxjs";
 import {DeleteRequest, FetchRequest} from "../proto-generated/dto";
 import {Empty} from "../proto-generated/google/protobuf/empty";
-import {GrpcMethod} from "@nestjs/microservices";
+import {GrpcMethod, RpcException} from "@nestjs/microservices";
+import {TokenDto} from "../auth/dto/token.dto";
+import {JwtService} from "@nestjs/jwt";
 
 @Controller('users')
 export class ClientsController implements ClientsServiceController {
 
-  constructor(private readonly clientsService: ClientsService) {
+  constructor(private readonly clientsService: ClientsService,
+              private readonly jwtService: JwtService) {
   }
 
   @GrpcMethod(CLIENTS_SERVICE_NAME)
   updateFirebaseMessagingToken(request: UpdateFBMessagingTokenRequest, metadata?: Metadata | undefined): void {
-    // console.log(11111)
-    // todo: - replace userId
-    this.clientsService.saveFBMessagingToken(1, request.token)
+    this.serializeToken(metadata)
+        .then(token => this.clientsService.saveFBMessagingToken(token.id, request.token))
   }
 
   @GrpcMethod(CLIENTS_SERVICE_NAME)
   createAddress(request: CreateAddressRequest, metadata?: Metadata): Promise<ClientAddress> | Observable<ClientAddress> | ClientAddress {
-    // todo: - replace userId
-    return this.clientsService.createAddress({...request, clientId: 1})
+    return this.serializeToken(metadata)
+        .then(token => this.clientsService.createAddress({...request, clientId: token.id}))
   }
 
   @GrpcMethod(CLIENTS_SERVICE_NAME)
@@ -40,14 +42,24 @@ export class ClientsController implements ClientsServiceController {
 
   @GrpcMethod(CLIENTS_SERVICE_NAME)
   fetchClientModel(request: Empty, metadata?: Metadata): Promise<Client> | Observable<Client> | Client {
-    // todo: - replace userId
-    return this.clientsService.fetchClientModel(1)
+    return this.serializeToken(metadata)
+        .then(token => this.clientsService.fetchClientModel(token.id))
   }
 
   @GrpcMethod(CLIENTS_SERVICE_NAME)
   fetchClientRecommendations(request: FetchRequest, metadata?: Metadata): Promise<FetchClientRecommendationsResponse> | Observable<FetchClientRecommendationsResponse> | FetchClientRecommendationsResponse {
-    // todo: - replace userId
-    return this.clientsService.fetchUserRecommendations(1, request.limit, request.offset)
+    return this.serializeToken(metadata)
+        .then(token => this.clientsService.fetchUserRecommendations(token.id, request.limit, request.offset))
+  }
+
+  private serializeToken<T>(metadata?: Metadata) {
+    try {
+      const token = metadata?.get('Authorization').at(0)
+      if (token === undefined) throw new RpcException('UNAUTHORIZED')
+      return this.jwtService.verifyAsync<TokenDto>(`${token}`)
+    } catch (e) {
+      throw new RpcException(e)
+    }
   }
 
 
