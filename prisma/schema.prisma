@@ -327,7 +327,7 @@ model Orders {
   clientAddressId      Int?                  @map("client_address_id")
   comment              String?               @db.VarChar
   courierDeliveryTasks CourierDeliveryTask[]
-  orderToGoods         OrderToGoods[]
+  orderGoods           OrderToGoods[]
   clientAddress        ClientAddresses?      @relation(fields: [clientAddressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   client               Clients?              @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 

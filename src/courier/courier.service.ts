@@ -51,7 +51,7 @@ export class CourierService {
             },
             include: {
                 clientAddress: true,
-                orderToGoods: {
+                orderGoods: {
                     include: {
                         good: true
                     }
@@ -75,7 +75,7 @@ export class CourierService {
                 order: {
                     include: {
                         clientAddress: true,
-                        orderToGoods: {
+                        orderGoods: {
                             include: {
                                 good: true
                             }

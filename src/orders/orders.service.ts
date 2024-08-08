@@ -30,7 +30,7 @@ export class OrdersService {
                 clientId: dto.clientId,
                 clientAddressId: dto.clientAddressId,
                 totalAmount: amount,
-                orderToGoods: {
+                orderGoods: {
                     createMany: {
                         data: [
                             ...dto.goods.map(i => ({
@@ -51,7 +51,7 @@ export class OrdersService {
                 id: orderId
             },
             include: {
-                orderToGoods: {
+                orderGoods: {
                     include: {
                         good: true
                     }
@@ -62,7 +62,7 @@ export class OrdersService {
         const dto: CreateOrderDto = {
             clientAddressId: order.clientAddressId,
             clientId: order.clientId,
-            goods: order.orderToGoods.map(i => ({
+            goods: order.orderGoods.map(i => ({
                 goodId: i.goodId,
                 amount: i.amount
             }))
@@ -102,7 +102,7 @@ export class OrdersService {
                         clientAddresses: true
                     }
                 },
-                orderToGoods: {
+                orderGoods: {
                     include: {
                         good: true
                     }
@@ -112,7 +112,7 @@ export class OrdersService {
         if (!order) throw new RpcException('order is undefined')
         return {
             ...order,
-            client: undefined
+            client: undefined,
         } as Order
     }
 

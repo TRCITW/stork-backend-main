@@ -171,6 +171,16 @@ export interface Order {
   comment?: string | undefined;
   client?: Client | undefined;
   clientAddress?: ClientAddress | undefined;
+  orderGoods: OrderToGoods[];
+}
+
+export interface OrderToGoods {
+  id: number;
+  goodId?: number | undefined;
+  orderId?: number | undefined;
+  amount?: number | undefined;
+  good?: Good | undefined;
+  order?: Order | undefined;
 }
 
 export interface ClientPaymentMethod {

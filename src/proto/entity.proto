@@ -154,6 +154,17 @@ message Order {
 
   optional Client client = 10;
   optional ClientAddress client_address = 11;
+  repeated OrderToGoods order_goods = 12;
+}
+
+message OrderToGoods {
+  int64 id = 1;
+  optional int64 good_id = 2;
+  optional int64 order_id = 3;
+  optional int32 amount = 4;
+
+  optional Good good = 5;
+  optional Order order = 6;
 }
 
 message ClientPaymentMethod {
